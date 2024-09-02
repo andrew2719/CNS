@@ -1,0 +1,49 @@
+Certainly! Let's discuss the bit-level details of what we're using in this Triple DES implementation:
+
+1. Block Size:
+   DES (and Triple DES) operates on 64-bit (8-byte) blocks. This is why our `encrypt_block` and `decrypt_block` methods work on `[u8; 8]` arrays.
+
+2. Key Size:
+   - Single DES uses a 56-bit key (although it's usually represented as 64 bits with 8 parity bits).
+   - Triple DES, as implemented here, uses three different 56-bit keys (again, represented as 64 bits each).
+   - So our total key size is 168 bits (3 * 56), represented as 192 bits (24 bytes) including parity bits.
+
+3. Triple DES Process:
+   - Encryption: Encrypt with key1, Decrypt with key2, Encrypt with key3
+   - Decryption: Decrypt with key3, Encrypt with key2, Decrypt with key1
+
+4. Padding:
+   We're using PKCS7 padding, which ensures the data is a multiple of the block size (64 bits). The padding bytes all have the same value, equal to the number of padding bytes added.
+
+5. Data Representation:
+   - We're using `u8` (8-bit unsigned integers) to represent our data at the byte level.
+   - When we display the hexadecimal representation, each byte is shown as two hex digits (8 bits = 2 hex digits).
+
+6. Hex Representation:
+   - Each hexadecimal digit represents 4 bits.
+   - So when you see something like "6764" in hex, it's actually:
+     6 (0110) 7 (0111) 6 (0110) 4 (0100) in binary
+
+Let's look at your example "gd":
+
+1. ASCII/UTF-8 representation:
+   'g' = 103 in decimal = 67 in hex = 01100111 in binary
+   'd' = 100 in decimal = 64 in hex = 01100100 in binary
+
+2. Original bytes (hex): 6764
+   This is exactly what we expect from the ASCII values.
+
+3. Encrypted data (hex): 0ba24aab8fe96570
+   - This is 16 hexadecimal digits, which is 64 bits (8 bytes).
+   - It's longer than our input because of padding. The original 2-byte input was padded to 8 bytes to fit the DES block size.
+
+4. Decrypted bytes (hex): 6764
+   This matches our original input.
+
+In summary, we're working with:
+- 8-bit bytes (u8 in Rust)
+- 64-bit blocks
+- 168-bit effective key size (represented as 192 bits with parity)
+- Hexadecimal representation for display (where each byte is shown as two hex digits)
+
+The Triple DES algorithm is manipulating these bits in complex ways to produce the encrypted output, but at the I/O level, we're dealing with sequences of 8-bit bytes.
